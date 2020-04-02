@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Evereal.YoutubeDLPlayer
 {
     public class PathParser : MonoBehaviour
     {
+        [SerializeField] Transform coreContainer;
+        [SerializeField] Text erroText;
         public YTDLCore ytdlCore;
         private VideoInfo videoInfo;
         string errorMsg = null;
@@ -21,11 +24,12 @@ namespace Evereal.YoutubeDLPlayer
         void ErrorReceived(YTDLCore.ErrorEvent error)
         {
             errorMsg = error.message;
+            erroText.text = "erro : " + errorMsg + " <color='yellow'>Juicy</color>에게 문의를...";
         }
 
         void ParseToPath(string link)
         {
-            YTDLCore tempCore = Instantiate(ytdlCore).GetComponent<YTDLCore>();
+            YTDLCore tempCore = Instantiate(ytdlCore, coreContainer).GetComponent<YTDLCore>();
             tempCore.parseCompleted += ParseCompleted;
             tempCore.errorReceived += ErrorReceived;
             StartCoroutine(tempCore.PrepareAndParse(link));
@@ -34,10 +38,7 @@ namespace Evereal.YoutubeDLPlayer
         public void ExecuteParese()
         {
             foreach (var link in ListContainer.Instance.links)
-            {
-                ListContainer.Instance.names.Add(link.Key);
-                ParseToPath(link.Value);
-            }
+                ParseToPath(link);
         }
     }
 }
