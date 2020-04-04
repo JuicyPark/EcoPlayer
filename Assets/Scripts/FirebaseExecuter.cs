@@ -47,7 +47,7 @@ public class FirebaseExecuter : MonoBehaviour
         string[] result = allMessage.Split(sep);
         foreach (var item in result)
         {
-            if (item.Contains("https://www.youtube.com/watch"))
+            if (item.Contains("https://www.youtube.com/watch")|| item.Contains("https://youtu.be/"))
             {
                 if (item.Contains(":ecoplayer:"))
                     return null;
