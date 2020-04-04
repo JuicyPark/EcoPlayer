@@ -11,9 +11,11 @@ public class VideoPlayerController : MonoBehaviour
     [SerializeField] Animator ecoPlayerAnimator;
     [SerializeField] Slider volumeSlider;
     [SerializeField] EcoplayerUI pauseUI;
+
     bool isRecycle = false;
     bool isRainy = false;
     bool isStart = false;
+
     List<int> playIndexs = new List<int>();
     int currentIndex = 0;
 

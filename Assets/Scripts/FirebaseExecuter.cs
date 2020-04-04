@@ -30,13 +30,16 @@ class Link
 public class FirebaseExecuter : MonoBehaviour
 {
     [SerializeField] Text console;
-    [SerializeField] Text erro;
-    [SerializeField] PathParser pathParser;
+    [SerializeField] Text erroConsole;
+
     [SerializeField] Animator ecoPlayerAnimator;
     [SerializeField] Animator btnGroupAnimator;
     [SerializeField] Animator movieAnimator;
+
     [SerializeField] Transform coreContainer;
+
     [SerializeField] VideoPlayerController videoPlayer;
+    [SerializeField] PathParser pathParser;
     bool reset = true;
 
     public const string firebasePath = "https://ecoplayer-64d9d.firebaseio.com/";
@@ -62,9 +65,7 @@ public class FirebaseExecuter : MonoBehaviour
         FirebaseDatabase.DefaultInstance.GetReference("ecoplayer").GetValueAsync().ContinueWith(task =>
         {
             if (task.IsFaulted)
-            {
                 Debug.Log("failed");
-            }
             else if (task.IsCompleted)
             {
                 Firebase.Database.DataSnapshot snapshot = task.Result;
@@ -106,10 +107,17 @@ public class FirebaseExecuter : MonoBehaviour
 
     void Restart()
     {
-        erro.text = "";
+        erroConsole.text = "";
         console.text = "다시 접속합니다.";
         StopAllCoroutines();
         StartCoroutine(DelayStart());
+    }
+
+    void InitAnimator()
+    {
+        ecoPlayerAnimator.enabled = true;
+        btnGroupAnimator.enabled = true;
+        movieAnimator.enabled = true;
     }
 
     IEnumerator DelayStart()
@@ -117,25 +125,23 @@ public class FirebaseExecuter : MonoBehaviour
         reset = false;
         yield return new WaitForSeconds(1f);
         console.text = "<color='yellow'>링크</color>를 <color='green'>노동요</color>로 변환 중입니다.\n 오래걸릴시 F5를 눌러주세요.";
-        pathParser.ExecuteParese();
-        yield return SpinLock();
+        pathParser.ExecuteParse();
+        yield return SpinWait();
         reset = true;
-        console.text = "<color='blue'>ECOPLAYER</color> 를 실행합니다";
+
+        console.text = "<color='blue'>ECOPLAYER</color> 를 실행합니다.";
         Destroy(coreContainer.gameObject);
         yield return new WaitForSeconds(2f);
+
         console.text = "";
-        ecoPlayerAnimator.enabled = true;
-        btnGroupAnimator.enabled = true;
-        movieAnimator.enabled = true;
+        InitAnimator();
         videoPlayer.PlayerStart();
     }
 
-    IEnumerator SpinLock()
+    IEnumerator SpinWait()
     {
         while (ListContainer.Instance.links.Count >= ListContainer.Instance.paths.Count * 2)
-        {
             yield return null;
-        }
         console.text = "<color='green'>노동요</color>를 리스트에 추가합니다.";
         yield return new WaitForSeconds(3.5f);
     }

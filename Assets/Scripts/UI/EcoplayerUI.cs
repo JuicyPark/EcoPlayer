@@ -16,7 +16,7 @@ public class EcoplayerUI : MonoBehaviour
         currentImage.sprite = typeA;
     }
 
-    public void PressButton()
+    public void PressToggle()
     {
         if (isType)
         {

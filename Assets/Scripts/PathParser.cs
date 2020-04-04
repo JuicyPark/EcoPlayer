@@ -35,7 +35,7 @@ namespace Evereal.YoutubeDLPlayer
             StartCoroutine(tempCore.PrepareAndParse(link));
         }
 
-        public void ExecuteParese()
+        public void ExecuteParse()
         {
             foreach (var link in ListContainer.Instance.links)
                 ParseToPath(link);
