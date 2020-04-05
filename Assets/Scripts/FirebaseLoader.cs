@@ -50,27 +50,6 @@ public class FirebaseLoader : MonoBehaviour
         return null;
     }
 
-    void LoadFirebase()
-    {
-        RestClient.Get(firebasePath).Then(response =>
-        {
-            var responseJson = response.Text;
-            var data = fsJsonParser.Parse(responseJson);
-            object deserialized = null;
-            serializer.TryDeserialize(data, typeof(Dictionary<string, Ecoplayer>), ref deserialized);
-
-            var users = deserialized as Dictionary<string, Ecoplayer>;
-
-            foreach (var user in users)
-            {
-                var link = user.Value.youtubeLink;
-                link = FindYoutubeLink(link);
-                if (link != null)
-                    ListContainer.Instance.links.Add(link);
-            }
-        });
-    }
-
     void ReconnectParser()
     {
         erroConsole.text = "";
@@ -93,19 +72,35 @@ public class FirebaseLoader : MonoBehaviour
         videoPlayer.PlayerStart();
     }
 
-    IEnumerator CSpinWait()
+    IEnumerator Start()
     {
-        while (ListContainer.Instance.links.Count != ListContainer.Instance.paths.Count)
+        console.text = "<color='blue'>ECOPLAYER</color>\nversion " + version;
+        yield return CLoadFirebase();
+        StartCoroutine(CParseYoutubeLink());
+    }
+
+    IEnumerator CLoadFirebase()
+    {
+        RestClient.Get(firebasePath).Then(response =>
         {
-            if (ListContainer.Instance.paths.Count > 0)
-                console.text = "<color='yellow'>링크</color>를 <color='green'>노동요</color>로 변환 중입니다.";
-            else
+            var responseJson = response.Text;
+            var data = fsJsonParser.Parse(responseJson);
+            object deserialized = null;
+            serializer.TryDeserialize(data, typeof(Dictionary<string, Ecoplayer>), ref deserialized);
+
+            var users = deserialized as Dictionary<string, Ecoplayer>;
+
+            foreach (var user in users)
             {
-                if (Input.GetKeyDown(KeyCode.F5))
-                    ReconnectParser();
+                var link = user.Value.youtubeLink;
+                link = FindYoutubeLink(link);
+                if (link != null)
+                    ListContainer.Instance.links.Add(link);
             }
+        });
+
+        while (ListContainer.Instance.links.Count == 0)
             yield return null;
-        }
     }
 
     IEnumerator CParseYoutubeLink()
@@ -122,10 +117,18 @@ public class FirebaseLoader : MonoBehaviour
         StartEcoPlayer();
     }
 
-    void Start()
+    IEnumerator CSpinWait()
     {
-        console.text = "<color='blue'>ECOPLAYER</color>\nversion " + version;
-        LoadFirebase();
-        StartCoroutine(CParseYoutubeLink());
+        while (ListContainer.Instance.links.Count != ListContainer.Instance.paths.Count)
+        {
+            if (ListContainer.Instance.paths.Count > 0)
+                console.text = "<color='yellow'>링크</color>를 <color='green'>노동요</color>로 변환 중입니다.";
+            else
+            {
+                if (Input.GetKeyDown(KeyCode.F5))
+                    ReconnectParser();
+            }
+            yield return null;
+        }
     }
 }
