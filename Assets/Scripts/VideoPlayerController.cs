@@ -125,7 +125,7 @@ public class VideoPlayerController : MonoBehaviour
         currentIndex--;
         if (currentIndex < 0)
             currentIndex = playIndexs.Count - 1;
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         videoPlayer.Play();
 
         isStart = true;
@@ -139,7 +139,7 @@ public class VideoPlayerController : MonoBehaviour
         currentIndex++;
         if (currentIndex >= playIndexs.Count)
             currentIndex = 0;
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         videoPlayer.Play();
 
         isStart = true;
@@ -171,7 +171,7 @@ public class VideoPlayerController : MonoBehaviour
     public void PlayerStart()
     {
         Shuffle();
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         isStart = true;
     }
 

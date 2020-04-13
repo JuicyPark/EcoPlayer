@@ -407,6 +407,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   coreContainer: {fileID: 805356666}
   erroText: {fileID: 635551723}
+  path: {fileID: 2735508486842485915, guid: c260b515404b8254e82179a63840de48, type: 3}
   ytdlCore: {fileID: 4668968337728017419, guid: 7a3a7c0e418cfd54898224a5bb44aa85,
     type: 3}
 --- !u!95 &172678924 stripped
