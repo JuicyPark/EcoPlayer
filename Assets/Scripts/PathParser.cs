@@ -9,6 +9,8 @@ namespace Evereal.YoutubeDLPlayer
     {
         [SerializeField] Transform coreContainer;
         [SerializeField] Text erroText;
+
+        public PathContainer path;
         public YTDLCore ytdlCore;
         private VideoInfo videoInfo;
         string errorMsg = null;
@@ -18,7 +20,10 @@ namespace Evereal.YoutubeDLPlayer
         void ParseCompleted(VideoInfo info)
         {
             videoInfo = info;
-            ListContainer.Instance.paths.Add(Utils.ValidParsedVideoUrl(videoInfo, videoInfo.url));
+            PathContainer currentPath = Instantiate(path).GetComponent<PathContainer>();
+            currentPath.path = /*Utils.ValidParsedVideoUrl(videoInfo, videoInfo.url);*/
+                videoInfo.url;
+            ListContainer.Instance.paths.Add(currentPath);
         }
 
         void ErrorReceived(YTDLCore.ErrorEvent error)

@@ -6,15 +6,23 @@ using UnityEngine.Video;
 
 public class VideoPlayerController : MonoBehaviour
 {
-    [SerializeField] VideoPlayer videoPlayer;
-    [SerializeField] Animator movieAnimator;
+    [SerializeField] GameObject farmObject;
+    [SerializeField] GameObject catObject;
+    [SerializeField] GameObject videoObject;
+
+    [SerializeField] Animator farmAnimator;
+    [SerializeField] Animator catAnimator;
+
     [SerializeField] Animator ecoPlayerAnimator;
+
+    [SerializeField] VideoPlayer videoPlayer;
     [SerializeField] Slider volumeSlider;
     [SerializeField] EcoplayerUI pauseUI;
 
-    bool isRecycle = false;
-    bool isRainy = false;
-    bool isStart = false;
+    bool isRecycle;
+    bool isAccelate;
+    bool isVideo;
+    bool isStart;
 
     List<int> playIndexs = new List<int>();
     int currentIndex = 0;
@@ -71,12 +79,36 @@ public class VideoPlayerController : MonoBehaviour
             isRecycle = false;
     }
 
-    public void Rainy()
+    public void Accelate()
     {
-        if (!isRainy)
-            isRainy = true;
+        if (!isAccelate)
+        {
+            isAccelate = true;
+            videoPlayer.playbackSpeed = 1.5f;
+            catObject.SetActive(true);
+        }
         else
-            isRainy = false;
+        {
+            isAccelate = false;
+            videoPlayer.playbackSpeed = 1.0f;
+            catObject.SetActive(false);
+        }
+    }
+
+    public void PlayVideo()
+    {
+        if (!isVideo)
+        {
+            isVideo = true;
+            farmObject.SetActive(false);
+            videoObject.SetActive(true);
+        }
+        else
+        {
+            isVideo = false;
+            farmObject.SetActive(true);
+            videoObject.SetActive(false);
+        }
     }
 
     public void Current()
@@ -93,12 +125,11 @@ public class VideoPlayerController : MonoBehaviour
         currentIndex--;
         if (currentIndex < 0)
             currentIndex = playIndexs.Count - 1;
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         videoPlayer.Play();
 
         isStart = true;
-        movieAnimator.enabled = true;
-        ecoPlayerAnimator.enabled = true;
+        SetAnimator(true);
     }
 
     public void Next()
@@ -108,35 +139,43 @@ public class VideoPlayerController : MonoBehaviour
         currentIndex++;
         if (currentIndex >= playIndexs.Count)
             currentIndex = 0;
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         videoPlayer.Play();
 
         isStart = true;
-        movieAnimator.enabled = true;
-        ecoPlayerAnimator.enabled = true;
+        SetAnimator(true);
     }
 
     public void Pause()
     {
         if (videoPlayer.isPlaying)
         {
-            movieAnimator.enabled = false;
-            ecoPlayerAnimator.enabled = false;
             isStart = false;
+            SetAnimator(false);
             videoPlayer.Pause();
         }
         else
         {
-            movieAnimator.enabled = true;
-            ecoPlayerAnimator.enabled = true;
+            SetAnimator(true);
             videoPlayer.Play();
         }
+    }
+
+    void SetAnimator(bool active)
+    {
+        catAnimator.enabled = active;
+        farmAnimator.enabled = active;
+        ecoPlayerAnimator.enabled = active;
     }
 
     public void PlayerStart()
     {
         Shuffle();
-        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]];
+        videoPlayer.url = ListContainer.Instance.paths[playIndexs[currentIndex]].path;
         isStart = true;
     }
+
+    public void UpSound() => volumeSlider.value += 0.1f;
+    public void DownSound() => volumeSlider.value -= 0.1f;
+
 }
